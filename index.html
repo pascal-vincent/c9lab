@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>POC web2apk</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+	<!-- Custom styles for this template -->
+	<link href="static/css/sticky-footer.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+
+</head>
+
+<body onload="initialize()">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="jumbotron">
+				<h2>Test web form</h2>
+				<p>Formulaire de test à appeler dans une webview pour interaction avec bridge javascript natif</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-1 col-lg-2"></div>
+			<div class="col-md-10 col-lg-8">
+				<form role="form" name="webform">
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Coordonnées
+								<button type="button" class="btn btn-default" id="clientFillButton" onClick="getAddress()">
+									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+								</button>							
+							</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-group col-md-6 col-xs-10">
+								<label for="firstName"> Prénom </label>
+								<input type="text" class="form-control" id="firstName" />
+							</div>
+							<div class="form-group col-md-6 col-xs-10">
+								<label for="lastName"> Nom </label>
+								<input type="text" class="form-control" id="lastName" />
+							</div>
+							<div class="form-group col-md-10 col-xs-10">
+								<label for="address1"> Adresse 1 </label>
+								<input type="text" class="form-control" id="address1" />
+							</div>
+							<div class="form-group col-md-10 col-xs-10">
+								<label for="address2"> Adresse 2 </label>
+								<input type="text" class="form-control" id="address2" />
+							</div>
+							<div class="form-group col-md-6 col-xs-10">
+								<label for="city"> Ville </label>
+								<input type="text" class="form-control" id="city" />
+							</div>
+							<div class="form-group col-md-6 col-xs-10">
+								<label for="zipcode"> Code postal </label>
+								<input type="text" class="form-control" id="zipcode" />
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Informations chèque
+								<button type="button" class="btn btn-default" id="bankCheckFillButton" onClick="getCheckData()">
+									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+								</button>							
+							</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-inline">
+								<div class="form-group">
+									<label for="checkNumber"> N° de chèque </label>
+									<input type="text" class="form-control" id="checkNumber" />
+								</div>
+								<div class="form-group">
+									<label for="checkAccount"> N° de compte </label>
+									<input type="text" class="form-control" id="checkAccount" />
+								</div>
+								<div class="form-group">
+									<label for="checkCrossBank"> Code inter banques </label>
+									<input type="text" class="form-control" id="checkCrossBank" />
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">RIB
+								<button type="button" class="btn btn-default" id="bankAccountFillButton" onClick="getSomeData()">
+									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+								</button>							
+							</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-group col-md-6 col-sm-6 col-xs-12">
+								<label for="bankName"> Nom de la banque </label>
+								<input type="text" class="form-control" id="bankName" />
+							</div>
+							<div class="form-group col-md-6 col-sm-6 col-xs-12">
+								<label for="accountOwner"> Nom du titulaire du compte </label>
+								<input type="text" class="form-control" id="accountOwner" />
+							</div>
+							<div class="form-group col-md-8 col-sm-8 col-xs-12">
+								<label for="IBAN"> IBAN </label>
+								<input type="text" class="form-control" id="IBAN" value="" />
+							</div>
+							<div class="form-group col-md-4 col-sm-4 col-xs-12">
+								<label for="BIC"> BIC </label>
+								<input type="text" class="form-control" id="BIC" maxlength="11" size="11" value="" />
+							</div>
+						</div>
+
+					</div>
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Code à barres
+								<button type="button" class="btn btn-default" id="barcodeFillButton" onClick="getBarCode()">
+									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+								</button>
+							</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-inline">
+								<div class="form-group">
+									<label for="barcode"> Code à barres </label>
+									<input type="text" class="form-control" id="barcode" />
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row col-md-offset-6 col-lg-offset-8 col-xs-offset-6">
+						<div class="col-md-6 col-xs-6">
+							<button type="submit" class="btn btn-primary">Envoyer</button>
+						</div>
+						<div class="col-md-6 col-xs-6">
+							<button class="btn btn-warning" type="reset">Reset</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+			<div class="col-md-1 col-lg-2"></div>
+		</div>
+	</div>
+
+	<footer class="footer">
+		<div class="container">
+			<div class="col-xs-6 col-xs-offset-6">
+				<p class="text-muted text-right">appli demo app2apk</p>
+			</div>
+		</div>
+	</footer>
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+		/* global SmarteoFormFill */
+		/* global $ */
+
+		// récupération des constantes
+		var SmarteoConst;
+
+		function onReceiveConstants(constants) {
+			SmarteoConst = constants;
+			console.log(JSON.stringify(SmarteoConst));
+		}
+
+		function initialize() {
+			if (typeof SmarteoFormFill === "undefined") {
+				$("#clientFillButton").hide();
+				$("#bankCheckFillButton").hide();
+				$("#bankAccountFillButton").hide();
+				$("#barcodeFillButton").hide();
+			}
+			else {
+				SmarteoFormFill.getConstants();
+			}
+		}
+
+		function onData(data) {
+			console.log("web form : " + JSON.stringify(data));
+			$("#firstName").val(data.firstname);
+			$("#lastName").val(data.lastname);
+			$("#address1").val(data.address);
+			$("#city").val(data.city);
+			$("#zipcode").val(data.zipcode);
+		}
+
+		function getCheckData() {
+			if (SmarteoFormFill && SmarteoConst) {
+				SmarteoFormFill.getDocFinder(SmarteoConst.CHEQUE);
+			}
+		}
+
+		function getSomeData() {
+			if (SmarteoFormFill && SmarteoConst) {
+				SmarteoFormFill.getDocFinder(SmarteoConst.GENERIQUE);
+			}
+		}
+		function getBarCode() {
+			SmarteoFormFill.getBarCode();
+		}
+		
+		function getAddress() {
+			getSomeData();
+		}
+
+		function onGenericData(data) {
+			alert(JSON.stringify(data));
+		}
+	</script>
+</body>
+
+</html>
