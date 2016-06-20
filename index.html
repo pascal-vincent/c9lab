@@ -52,15 +52,11 @@
 						<div class="panel-body">
 							<div class="form-group radio">
 								<label>
-    								<input type="radio" name="clientGenreRadio" id="clientGenreMr" value="Mr">
+    								<input type="radio" name="clientGenreRadio" id="clientGenreHomme" value="Mr">
     									Mr
   								</label>
 								<label>
-    								<input type="radio" name="clientGenreRadio" id="clientGenreMlle" value="Mlle">
-    									Mlle
-  								</label>
-								<label>
-    								<input type="radio" name="clientGenreRadio" id="clientGenreMme" value="Mme">
+    								<input type="radio" name="clientGenreRadio" id="clientGenreFemme" value="Mme">
     									Mme
   								</label>
 							</div>
@@ -87,7 +83,7 @@
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title">Coordonnées
-								<button type="button" class="btn btn-default" id="addressFillButton" onClick="getIdCheck()">
+								<button type="button" class="btn btn-default" id="addressFillButton" onClick="getSomeData()">
 									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
 								</button>							
 							</h3>
@@ -131,7 +127,7 @@
 									<input type="text" class="form-control" id="checkAccount" />
 								</div>
 								<div class="form-group">
-									<label for="checkCrossBank"> Code inter banques </label>
+									<label for="checkCrossBank"> Code interbancaire </label>
 									<input type="text" class="form-control" id="checkCrossBank" />
 								</div>
 							</div>
@@ -240,6 +236,27 @@
 
 		function onData(data) {
 			console.log("data : " + JSON.stringify(data));
+			var docFinderData;
+			if(data && data.dataList && data.dataList.length > 0) {
+				for(var i=0;i<data.dataList.length;i++ ) {
+					docFinderData = data.dataList[i].data;
+					if(docFinderData.type === 'Cheque') {
+						$("#checkNumber").val(docFinderData.properties.numeroCheque);
+						$("#checkAccount").val(docFinderData.properties.codeInterieur);
+						$("#checkCrossBank").val(docFinderData.properties.codeInterbancaire);
+					} else if (docFinderData.type === 'IBAN') {
+						$("#IBAN").val(docFinderData.properties.iban);
+					} else if(docFinderData.type === 'BIC') {
+						$("#BIC").val(docFinderData.properties.bic);
+						$("#bankName").val(docFinderData.properties.bankName);
+					} else if (docFinderData.type === 'Adresse') {
+						$("#address1").val(docFinderData.properties.rue);
+						$("#address2").val(docFinderData.properties.complementRue);
+						$("#city").val(docFinderData.properties.codePostal);
+						$("#zipcode").val(docFinderData.properties.ville);
+					}
+				}
+			}
 		}
 
 		function onAddressData(data) {
@@ -258,41 +275,29 @@
 			var mrzData;
 			
 			if (data) {
-				console.log("verifID data : " + JSON.stringify(data));
+				mrzData = data[0].data;
+				// console.log(JSON.stringify(mrzData));
 			}
 
-			var mockData = {
-				genre: "Mr",
-				prenom: "Jean",
-				nom: "Dupont",
-				naissance: "20/01/1980",
-				nationalite: "Français"
-			}
-
-			// mrzData = mockData;
-			mrzData = data;
-			
 			var genreSelector = "";
 
-			if(mrzData.genre === 'Mr') {
-				genreSelector = "#clientGenreMr"; 
-			} else if (mrzData.genre === "Mlle") {
-				genreSelector = "#clientGenreMlle"; 
-			} else if (mrzData.genre === "Mme") {
-				genreSelector = "#clientGenreMme"; 
+			if(mrzData.sexe === 'M') {
+				genreSelector = "#clientGenreHomme"; 
+			} else if (mrzData.sexe === "F") {
+				genreSelector = "#clientGenreFemme"; 
 			} else {
-				console.error("unknown client genre : " + mrzData.genre);
+				console.error("unknown client sexe : " + mrzData.sexe);
 			}
 			// clientGenre
 			$(genreSelector).prop("checked", true);
 			// clientFirstName
-			$("#clientFirstName").val(mrzData.prenom);
+			$("#clientFirstName").val(mrzData.prenom1);
 			// clientLastName
-			$("#clientLastName").val(mrzData.nom);
+			$("#clientLastName").val(mrzData.nomFamille);
 			// clientBirthDate
-			$("#clientBirthDate").val(mrzData.naissance);
+			$("#clientBirthDate").val(mrzData.dateNaissance);
 			// clientNationality
-			$("#clientNationality").val(mrzData.nationalite);
+			$("#clientNationality").val(mrzData.libellePays);
 		}
 
 		function getCheckData() {
@@ -324,7 +329,7 @@
 		}
 
 		function onGenericData(data) {
-			alert(JSON.stringify(data));
+			console.log(JSON.stringify(data));
 		}
 		
 	</script>
