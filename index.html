@@ -33,7 +33,7 @@
 		<div class="row">
 			<div class="jumbotron">
 				<h2>Test web form</h2>
-				<p>Formulaire de test à appeler dans une webview pour interaction avec bridge javascript natif</p>
+				<p>Formulaire de test à appeler dans une webview pour interaction avec bridge javascript Android</p>
 			</div>
 		</div>
 		<div class="row">
@@ -43,21 +43,56 @@
 
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h3 class="panel-title">Coordonnées
-								<button type="button" class="btn btn-default" id="clientFillButton" onClick="getAddress()">
+							<h3 class="panel-title">Client
+								<button type="button" class="btn btn-default" id="clientFillButton" onClick="getIdCheck()">
 									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
 								</button>							
 							</h3>
 						</div>
 						<div class="panel-body">
-							<div class="form-group col-md-6 col-xs-10">
-								<label for="firstName"> Prénom </label>
-								<input type="text" class="form-control" id="firstName" />
+							<div class="form-group radio">
+								<label>
+    								<input type="radio" name="clientGenreRadio" id="clientGenreMr" value="Mr">
+    									Mr
+  								</label>
+								<label>
+    								<input type="radio" name="clientGenreRadio" id="clientGenreMlle" value="Mlle">
+    									Mlle
+  								</label>
+								<label>
+    								<input type="radio" name="clientGenreRadio" id="clientGenreMme" value="Mme">
+    									Mme
+  								</label>
 							</div>
-							<div class="form-group col-md-6 col-xs-10">
-								<label for="lastName"> Nom </label>
-								<input type="text" class="form-control" id="lastName" />
+
+							<div class="form-group">
+								<label for="clientFirstName">Prénom</label>
+								<input type="text" class="form-control" id="clientFirstName" />
 							</div>
+							<div class="form-group">
+								<label for="clientLastName">Nom</label>
+								<input type="text" class="form-control" id="clientLastName" />
+							</div>
+							<div class="form-group">
+								<label for="clientBirthDate">Date de naissance</label>
+								<input type="text" class="form-control" id="clientBirthDate" />
+							</div>
+							<div class="form-group">
+								<label for="clientNationality">Nationalité</label>
+								<input type="text" class="form-control" id="clientNationality" />
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Coordonnées
+								<button type="button" class="btn btn-default" id="addressFillButton" onClick="getIdCheck()">
+									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+								</button>							
+							</h3>
+						</div>
+						<div class="panel-body">
 							<div class="form-group col-md-10 col-xs-10">
 								<label for="address1"> Adresse 1 </label>
 								<input type="text" class="form-control" id="address1" />
@@ -135,7 +170,7 @@
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title">Code à barres
-								<button type="button" class="btn btn-default" id="barcodeFillButton" onClick="getBarCode()">
+								<button type="button" class="btn btn-default" id="barcodeFillButton" onClick="getBarcode()">
 									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
 								</button>
 							</h3>
@@ -187,12 +222,13 @@
 
 		function onReceiveConstants(constants) {
 			SmarteoConst = constants;
-			console.log(JSON.stringify(SmarteoConst));
+			console.log("receive a constants object :" + JSON.stringify(SmarteoConst));
 		}
 
 		function initialize() {
 			if (typeof SmarteoFormFill === "undefined") {
 				$("#clientFillButton").hide();
+				$("#addressFillButton").hide();
 				$("#bankCheckFillButton").hide();
 				$("#bankAccountFillButton").hide();
 				$("#barcodeFillButton").hide();
@@ -203,12 +239,60 @@
 		}
 
 		function onData(data) {
-			console.log("web form : " + JSON.stringify(data));
-			$("#firstName").val(data.firstname);
-			$("#lastName").val(data.lastname);
+			console.log("data : " + JSON.stringify(data));
+		}
+
+		function onAddressData(data) {
+			console.log("address data : " + JSON.stringify(data));
 			$("#address1").val(data.address);
 			$("#city").val(data.city);
 			$("#zipcode").val(data.zipcode);
+		}
+
+		function onBarcodeData(data) {
+			console.log("barcode data : " + JSON.stringify(data));
+			$("#barcode").val(data.text);
+		}
+
+		function onVerifIdData(data) {
+			var mrzData;
+			
+			if (data) {
+				console.log("verifID data : " + JSON.stringify(data));
+			}
+
+			var mockData = {
+				genre: "Mr",
+				prenom: "Jean",
+				nom: "Dupont",
+				naissance: "20/01/1980",
+				nationalite: "Français"
+			}
+
+			// mrzData = mockData;
+			mrzData = data;
+			
+			var genreSelector = "";
+
+			if(mrzData.genre === 'Mr') {
+				genreSelector = "#clientGenreMr"; 
+			} else if (mrzData.genre === "Mlle") {
+				genreSelector = "#clientGenreMlle"; 
+			} else if (mrzData.genre === "Mme") {
+				genreSelector = "#clientGenreMme"; 
+			} else {
+				console.error("unknown client genre : " + mrzData.genre);
+			}
+			// clientGenre
+			$(genreSelector).prop("checked", true);
+			// clientFirstName
+			$("#clientFirstName").val(mrzData.prenom);
+			// clientLastName
+			$("#clientLastName").val(mrzData.nom);
+			// clientBirthDate
+			$("#clientBirthDate").val(mrzData.naissance);
+			// clientNationality
+			$("#clientNationality").val(mrzData.nationalite);
 		}
 
 		function getCheckData() {
@@ -222,10 +306,19 @@
 				SmarteoFormFill.getDocFinder(SmarteoConst.GENERIQUE);
 			}
 		}
-		function getBarCode() {
-			SmarteoFormFill.getBarCode();
+
+		function getBarcode() {
+			if (SmarteoFormFill) {
+				SmarteoFormFill.getBarcode();
+			}
 		}
-		
+
+		function getIdCheck() {
+			if (SmarteoFormFill) {
+				SmarteoFormFill.getIdCheck();
+			}
+		}
+
 		function getAddress() {
 			getSomeData();
 		}
@@ -233,6 +326,7 @@
 		function onGenericData(data) {
 			alert(JSON.stringify(data));
 		}
+		
 	</script>
 </body>
 
