@@ -43,11 +43,7 @@
 
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							<h3 class="panel-title">Client
-								<button type="button" class="btn btn-default" id="clientFillButton" onClick="getIdCheck()">
-									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
-								</button>							
-							</h3>
+							<h3 class="panel-title">Client</h3>
 						</div>
 						<div class="panel-body">
 							<div class="form-group radio">
@@ -213,6 +209,36 @@
 		/* global SmarteoFormFill */
 		/* global $ */
 
+		function lab() {
+			var captureMenu = document.createElement('ul');
+			captureMenu.id = 'captureMenu';
+
+			captureMenu.style.listStyleType = 'none';
+			captureMenu.style.margin = '0';
+			captureMenu.style.padding = '0';
+			captureMenu.style.position = 'fixed';
+			captureMenu.style.right = '0';
+			captureMenu.style.top = '50%';
+			captureMenu.style.width = '8em';
+			captureMenu.style.opacity = '0.5';
+			captureMenu.style.font = '100% Lucida Sans, Verdana';
+
+			var menuItem1 = document.createElement('li');
+			menuItem1.style.margin = '5px';
+			menuItem1.style.padding = '10px';
+			menuItem1.style.borderRadius = '5px';
+			menuItem1.style.backgroundColor = '#f1f1f1';
+			menuItem1.style.border = '1px solid #555';
+			menuItem1.textContent = 'VerifID';
+			menuItem1.addEventListener('click', function() {
+				SmarteoFormFill.getIdCheck();
+			});
+
+			captureMenu.appendChild(menuItem1);
+
+			document.body.appendChild(captureMenu);
+		}
+		
 		// récupération des constantes
 		var SmarteoConst;
 
@@ -222,8 +248,11 @@
 		}
 
 		function initialize() {
+			
+			lab();
+			
 			if (typeof SmarteoFormFill === "undefined") {
-				$("#clientFillButton").hide();
+				// $("#clientFillButton").hide();
 				$("#addressFillButton").hide();
 				$("#bankCheckFillButton").hide();
 				$("#bankAccountFillButton").hide();
@@ -237,19 +266,22 @@
 		function onData(data) {
 			console.log("data : " + JSON.stringify(data));
 			var docFinderData;
-			if(data && data.dataList && data.dataList.length > 0) {
-				for(var i=0;i<data.dataList.length;i++ ) {
+			if (data && data.dataList && data.dataList.length > 0) {
+				for (var i = 0; i < data.dataList.length; i++) {
 					docFinderData = data.dataList[i].data;
-					if(docFinderData.type === 'Cheque') {
+					if (docFinderData.type === 'Cheque') {
 						$("#checkNumber").val(docFinderData.properties.numeroCheque);
 						$("#checkAccount").val(docFinderData.properties.codeInterieur);
 						$("#checkCrossBank").val(docFinderData.properties.codeInterbancaire);
-					} else if (docFinderData.type === 'IBAN') {
+					}
+					else if (docFinderData.type === 'IBAN') {
 						$("#IBAN").val(docFinderData.properties.iban);
-					} else if(docFinderData.type === 'BIC') {
+					}
+					else if (docFinderData.type === 'BIC') {
 						$("#BIC").val(docFinderData.properties.bic);
 						$("#bankName").val(docFinderData.properties.bankName);
-					} else if (docFinderData.type === 'Adresse') {
+					}
+					else if (docFinderData.type === 'Adresse') {
 						$("#address1").val(docFinderData.properties.rue);
 						$("#address2").val(docFinderData.properties.complementRue);
 						$("#city").val(docFinderData.properties.codePostal);
@@ -271,35 +303,6 @@
 			$("#barcode").val(data.text);
 		}
 
-		function onVerifIdData(data) {
-			var mrzData;
-			
-			if (data) {
-				mrzData = data[0].data;
-				// console.log(JSON.stringify(mrzData));
-			}
-
-			var genreSelector = "";
-
-			if(mrzData.sexe === 'M') {
-				genreSelector = "#clientGenreHomme"; 
-			} else if (mrzData.sexe === "F") {
-				genreSelector = "#clientGenreFemme"; 
-			} else {
-				console.error("unknown client sexe : " + mrzData.sexe);
-			}
-			// clientGenre
-			$(genreSelector).prop("checked", true);
-			// clientFirstName
-			$("#clientFirstName").val(mrzData.prenom1);
-			// clientLastName
-			$("#clientLastName").val(mrzData.nomFamille);
-			// clientBirthDate
-			$("#clientBirthDate").val(mrzData.dateNaissance);
-			// clientNationality
-			$("#clientNationality").val(mrzData.libellePays);
-		}
-
 		function getCheckData() {
 			if (SmarteoFormFill && SmarteoConst) {
 				SmarteoFormFill.getDocFinder(SmarteoConst.CHEQUE);
@@ -318,20 +321,9 @@
 			}
 		}
 
-		function getIdCheck() {
-			if (SmarteoFormFill) {
-				SmarteoFormFill.getIdCheck();
-			}
-		}
-
 		function getAddress() {
 			getSomeData();
 		}
-
-		function onGenericData(data) {
-			console.log(JSON.stringify(data));
-		}
-		
 	</script>
 </body>
 
