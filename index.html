@@ -24,11 +24,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-
-
 </head>
 
-<body onload="initialize()">
+<body>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="jumbotron">
@@ -37,6 +35,10 @@
 			</div>
 		</div>
 		<div class="row">
+			<div>
+				<a href='intent'>test lien intent</a>	
+			</div>
+			
 			<div class="col-md-1 col-lg-2"></div>
 			<div class="col-md-10 col-lg-8">
 				<form role="form" name="webform">
@@ -234,6 +236,9 @@
 				SmarteoFormFill.getIdCheck();
 			});
 
+			var inButton = document.createElement('span');
+			inButton.textContent = '<';
+			
 			captureMenu.appendChild(menuItem1);
 
 			document.body.appendChild(captureMenu);
